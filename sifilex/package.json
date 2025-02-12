@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.6.1",
     "@auth0/nextjs-auth0": "^4.0.1",
     "antd": "4.24.16",
     "next": "14.2.24",
