@@ -1,12 +1,9 @@
-import type { Metadata } from "next";
-import localFont from 'next/font/local';
+import { Metadata } from "next";
+import localFont from "next/font/local";
 import "./styles/globals.css";
+import SessionWrapper from "../../components/SessionWrapper";
 
-export const metadata: Metadata = {
-  title: "SiFilex",
-  description: "Gérer vos fichiers en toute sécurité",
-};
-
+// Importation de la police
 const apfelGrotezk = localFont({
   src: [
     {
@@ -35,10 +32,17 @@ const apfelGrotezk = localFont({
 
 export { apfelGrotezk };
 
+export const metadata: Metadata = {
+  title: "SiFilex",
+  description: "Gérer vos fichiers en toute sécurité",
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${apfelGrotezk.variable}`}>{children}</body>
+      <SessionWrapper>
+        <body className={`${apfelGrotezk.variable}`}>{children}</body>
+      </SessionWrapper>
     </html>
   );
 }
