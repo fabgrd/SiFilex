@@ -4,17 +4,25 @@ import {
   createEdgeStoreNextHandler,
 } from "@edgestore/server/adapters/next/app";
 import { z } from "zod";
+import { authOptions } from "../../../../../lib/authOptions";
+import { getServerSession } from "next-auth";
 
 type Context = {
   userId: string;
   userRole: "admin" | "user";
 };
 
-function createContext({ req }: CreateContextOptions): Context {
+async function createContext({ req }: CreateContextOptions):  Promise<Context> {
   // get the session from your auth provider
+  const session = await getServerSession(authOptions);
+  console.log("EMAIL : ", session?.user?.email);
+  
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
   // const session = getSession(req);
   return {
-    userId: "1234",
+    userId: '123',
     userRole: "admin",
   };
 }
@@ -58,3 +66,4 @@ const handler = createEdgeStoreNextHandler({
 export { handler as GET, handler as POST };
 
 export type EdgeStoreRouter = typeof edgeStoreRouter;
+export { edgeStoreRouter };
