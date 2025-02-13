@@ -126,6 +126,11 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
       setNewName("");
     };
 
+    // Calculer l'espace total utilisé
+    const totalStorageUsed = React.useMemo(() => {
+      return (value ?? []).reduce((total, { file }) => total + file.size, 0);
+    }, [value]);
+
     return (
       <div className="dropzone-container">
         {/* Champ de recherche */}
@@ -151,6 +156,11 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
         {customError || errorMessage ? (
           <p style={{ color: "red", fontSize: "12px" }}>{customError ?? errorMessage}</p>
         ) : null}
+
+        {/* Affichage de l'espace total utilisé */}
+        <div style={{ marginTop: "20px", fontSize: "14px", color: "#555" }}>
+          Total Storage Used: {formatFileSize(totalStorageUsed)}
+        </div>
 
         {filteredFiles?.map(({ file, progress, renamed }, i) => (
           <div key={i} className="file-preview mt-2">
