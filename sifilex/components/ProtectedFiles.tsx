@@ -6,9 +6,9 @@ import {
 } from "../src/app/components/multi-file-dropzone";
 import { useEdgeStore } from "@/lib/edgestore";
 import { useState } from "react";
-import { DownloadOutlined } from "@ant-design/icons"; // Icône Ant Design
+import { DownloadOutlined } from "@ant-design/icons";
 
-import { Button, Space } from "antd"; // Composants Ant Design pour les boutons et espaces
+import { Button, Space } from "antd";
 
 export default function Page() {
   const [fileStates, setFileStates] = useState<FileState[]>([]);
@@ -63,8 +63,7 @@ export default function Page() {
       />
       <div className="mt-4">
         {fileStates.map((fileState, index) => (
-          <div key={index} className="flex items-center space-x-2">
-            <DownloadOutlined /> {/* Icône de téléchargement */}
+          <div key={index} className="">
             <span>{fileState.file.name}</span>
             <Space>
               <Button

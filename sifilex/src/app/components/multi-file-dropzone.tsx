@@ -5,7 +5,8 @@ import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   EditOutlined,
-  EyeOutlined, // Ajout de l'icône d'œil
+  EyeOutlined,
+  DownloadOutlined, // Ajout de l'icône de téléchargement
 } from "@ant-design/icons";
 import * as React from "react";
 import { Upload, message } from "antd";
@@ -169,8 +170,8 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           })}
         >
           <input ref={ref} {...getInputProps()} />
+          <p>Drag & drop or click to upload</p>
           <UploadOutlined className="upload-icon" />
-          <p className="upload-message">Drag & drop or click to upload</p>
         </div>
         {customError || errorMessage ? (
           <p style={{ color: "red", fontSize: "12px" }}>{customError ?? errorMessage}</p>
@@ -224,13 +225,17 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                   style={{ cursor: "pointer", color: "#1890ff", marginLeft: 10 }}
                   onClick={() => handlePreviewFile(file)}
                 />
+                {/* Ajout du bouton Télécharger */}
+                <a href={URL.createObjectURL(file)} download={file.name}>
+                  <DownloadOutlined style={{ cursor: "pointer", marginLeft: 10 }} />
+                </a>
               </>
             )}
           </div>
-          
         ))}
-         {/* Affichage de l'espace total utilisé */}
-         <div style={{ marginTop: "20px", fontSize: "14px", color: "#555" }}>
+        
+        {/* Affichage de l'espace total utilisé */}
+        <div style={{ marginTop: "20px", fontSize: "14px", color: "#555" }}>
           Total Storage Used: {formatFileSize(totalStorageUsed)}
         </div>
       </div>
