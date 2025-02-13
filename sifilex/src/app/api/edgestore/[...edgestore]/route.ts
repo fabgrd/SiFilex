@@ -6,7 +6,7 @@ import {
 import { z } from "zod";
 import { authOptions } from "../../../../../lib/authOptions";
 import { getServerSession } from "next-auth";
-import {createHash} from "crypto";
+import { createHash } from "crypto";
 
 type Context = {
   userId: string;

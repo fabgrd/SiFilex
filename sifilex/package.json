@@ -13,6 +13,7 @@
     "@auth0/nextjs-auth0": "^4.0.1",
     "@edgestore/react": "^0.2.2",
     "@edgestore/server": "^0.2.2",
+    "@prisma/client": "^6.3.1",
     "antd": "4.24.16",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",

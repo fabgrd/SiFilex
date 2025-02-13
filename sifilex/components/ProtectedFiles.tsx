@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  MultiFileDropzone,
-  type FileState,
-} from "../src/app/components/multi-file-dropzone";
+import { MultiFileDropzone, type FileState} from "../src/app/components/MultiFileDropzone/multi-file-dropzone";
 import { useEdgeStore } from "@/lib/edgestore";
 import { useState } from "react";
 import { DownloadOutlined } from "@ant-design/icons"; // Icône Ant Design
@@ -59,6 +56,10 @@ export default function Page() {
               }
             })
           );
+        }}
+        dropzoneOptions={{
+          maxFiles: 10,
+          maxSize: 15 * 1024 * 1024, // Limite la taille à 15 Mo
         }}
       />
       <div className="mt-4">

@@ -17,6 +17,9 @@ dependencies:
   '@edgestore/server':
     specifier: ^0.2.2
     version: 0.2.2(react-dom@18.3.1)(react@18.3.1)(zod@3.24.2)
+  '@prisma/client':
+    specifier: ^6.3.1
+    version: 6.3.1(typescript@5.7.3)
   antd:
     specifier: 4.24.16
     version: 4.24.16(react-dom@18.3.1)(react@18.3.1)
@@ -1079,6 +1082,22 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@prisma/client@6.3.1(typescript@5.7.3):
+    resolution: {integrity: sha512-ARAJaPs+eBkemdky/XU3cvGRl+mIPHCN2lCXsl5Vlb0E2gV+R6IN7aCI8CisRGszEZondwIsW9Iz8EJkTdykyA==}
+    engines: {node: '>=18.18'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+      typescript: '>=5.1.0'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      typescript: 5.7.3
+    dev: false
 
   /@rc-component/portal@1.1.2(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-6f813C0IsasTZms08kfA8kPAGxbbkYToa8ALaiDIGGECU4i9hj8Plgbx0sNJDrey3EtHO30hmdaxtT0138xZcg==}
@@ -5521,7 +5540,6 @@ packages:
     resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
   /unbox-primitive@1.1.0:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}

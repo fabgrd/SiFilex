@@ -6,11 +6,21 @@ import {
   ExclamationCircleOutlined,
   EditOutlined,
   EyeOutlined,
-  DownloadOutlined, // Ajout de l'icône de téléchargement
+  DownloadOutlined,
 } from "@ant-design/icons";
 import * as React from "react";
 import { Upload, message } from "antd";
 import { DropzoneOptions, useDropzone } from "react-dropzone";
+import { formatFileSize, getErrorMessage } from "./error-utils";
+import {
+  handlePreviewFile,
+  createFileState,
+  calculateTotalStorageUsed,
+  filterFilesByName,
+  handleFileRename,
+  handleFileRemove,
+  checkMaxFilesLimit,
+} from "./file-operations";
 
 export type FileState = {
   file: File;
@@ -27,33 +37,17 @@ type InputProps = {
   dropzoneOptions?: Omit<DropzoneOptions, "disabled">;
 };
 
-const ERROR_MESSAGES = {
-  fileTooLarge(maxSize: number) {
-    return `The file is too large. Max size is ${formatFileSize(maxSize)}.`;
-  },
-  fileInvalidType() {
-    return "Invalid file type.";
-  },
-  tooManyFiles(maxFiles: number) {
-    return `You can only add ${maxFiles} file(s).`;
-  },
-  fileNotSupported() {
-    return "The file is not supported.";
-  },
-};
-
 const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
   ({ dropzoneOptions, value, disabled, onFilesAdded, onChange }, ref) => {
     const [customError, setCustomError] = React.useState<string>();
     const [searchQuery, setSearchQuery] = React.useState<string>("");
+    const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
+    const [newName, setNewName] = React.useState<string>("");
 
-    // Filtrage des fichiers selon la recherche
-    const filteredFiles = React.useMemo(() => {
-      return (value ?? []).filter(({ file, renamed }) => {
-        const fileName = renamed || file.name;
-        return fileName.toLowerCase().includes(searchQuery.toLowerCase());
-      });
-    }, [value, searchQuery]);
+    const filteredFiles = React.useMemo(
+      () => filterFilesByName(value, searchQuery),
+      [value, searchQuery]
+    );
 
     if (dropzoneOptions?.maxFiles && value?.length) {
       disabled = disabled ?? value.length >= dropzoneOptions.maxFiles;
@@ -69,53 +63,21 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
       disabled,
       onDrop: (acceptedFiles) => {
         setCustomError(undefined);
-        if (
-          dropzoneOptions?.maxFiles &&
-          (value?.length ?? 0) + acceptedFiles.length > dropzoneOptions.maxFiles
-        ) {
-          setCustomError(ERROR_MESSAGES.tooManyFiles(dropzoneOptions.maxFiles));
+        if (checkMaxFilesLimit(value?.length ?? 0, acceptedFiles.length, dropzoneOptions?.maxFiles)) {
+          setCustomError(`You can only add ${dropzoneOptions?.maxFiles} file(s).`);
           return;
         }
-        const addedFiles = acceptedFiles.map<FileState>((file) => ({
-          file,
-          key: Math.random().toString(36).slice(2),
-          progress: "PENDING",
-        }));
+        const addedFiles = acceptedFiles.map(createFileState);
         void onFilesAdded?.(addedFiles);
         void onChange?.([...(value ?? []), ...addedFiles]);
       },
       ...dropzoneOptions,
     });
 
-    const errorMessage = React.useMemo(() => {
-      if (fileRejections[0]) {
-        const { errors } = fileRejections[0];
-        if (errors[0]?.code === "file-too-large") {
-          return ERROR_MESSAGES.fileTooLarge(dropzoneOptions?.maxSize ?? 0);
-        } else if (errors[0]?.code === "file-invalid-type") {
-          return ERROR_MESSAGES.fileInvalidType();
-        } else if (errors[0]?.code === "too-many-files") {
-          return ERROR_MESSAGES.tooManyFiles(dropzoneOptions?.maxFiles ?? 0);
-        } else {
-          return ERROR_MESSAGES.fileNotSupported();
-        }
-      }
-      return undefined;
-    }, [fileRejections, dropzoneOptions]);
-
-    const handleRemoveFile = (index: number) => {
-      const updatedFiles = value?.filter((_, i) => i !== index);
-      onChange?.(updatedFiles ?? []);
-    };
-
-    const handleRenameFile = (index: number, newName: string) => {
-      const updatedFiles = [...(value ?? [])];
-      updatedFiles[index].renamed = newName;
-      onChange?.(updatedFiles);
-    };
-
-    const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
-    const [newName, setNewName] = React.useState<string>("");
+    const errorMessage = React.useMemo(
+      () => getErrorMessage(fileRejections, dropzoneOptions),
+      [fileRejections, dropzoneOptions]
+    );
 
     const handleEditClick = (index: number, currentName: string) => {
       setEditingIndex(index);
@@ -123,37 +85,19 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     };
 
     const handleSaveRename = (index: number) => {
-      handleRenameFile(index, newName);
+      const updatedFiles = handleFileRename(value ?? [], index, newName);
+      onChange?.(updatedFiles);
       setEditingIndex(null);
       setNewName("");
     };
 
-    const totalStorageUsed = React.useMemo(() => {
-      return (value ?? []).reduce((total, { file }) => total + file.size, 0);
-    }, [value]);
-
-    // Fonction pour afficher un aperçu du fichier
-    const handlePreviewFile = (file: File) => {
-      const fileType = file.type;
-      const fileUrl = URL.createObjectURL(file);
-
-      if (fileType.startsWith("text") || file.name.endsWith(".md")) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const content = reader.result as string;
-          alert(`File content: \n${content}`);
-        };
-        reader.readAsText(file);
-      } else if (fileType === "application/pdf") {
-        window.open(fileUrl, "_blank");
-      } else {
-        alert("File type not supported for preview.");
-      }
-    };
+    const totalStorageUsed = React.useMemo(
+      () => calculateTotalStorageUsed(value),
+      [value]
+    );
 
     return (
       <div className="dropzone-container">
-        {/* Champ de recherche */}
         <input
           type="text"
           placeholder="Rechercher par nom de fichier"
@@ -203,12 +147,14 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                   />
                 </div>
               )}
-              <div style={{ fontSize: "12px", color: "#8c8c8c" }}>{formatFileSize(file.size)}</div>
+              <div style={{ fontSize: "12px", color: "#8c8c8c" }}>
+                {formatFileSize(file.size)}
+              </div>
             </div>
             {progress === "PENDING" ? (
               <DeleteOutlined
                 style={{ color: "red", cursor: "pointer" }}
-                onClick={() => void onChange?.(value?.filter((_, index) => index !== i) ?? [])}
+                onClick={() => void onChange?.(handleFileRemove(value ?? [], i))}
               />
             ) : progress === "ERROR" ? (
               <ExclamationCircleOutlined style={{ color: "red" }} />
@@ -219,13 +165,12 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                 <CheckCircleOutlined style={{ color: "green" }} />
                 <DeleteOutlined
                   style={{ color: "red", cursor: "pointer", marginLeft: 10 }}
-                  onClick={() => handleRemoveFile(i)}
+                  onClick={() => void onChange?.(handleFileRemove(value ?? [], i))}
                 />
                 <EyeOutlined
                   style={{ cursor: "pointer", color: "#1890ff", marginLeft: 10 }}
                   onClick={() => handlePreviewFile(file)}
                 />
-                {/* Ajout du bouton Télécharger */}
                 <a href={URL.createObjectURL(file)} download={file.name}>
                   <DownloadOutlined style={{ cursor: "pointer", marginLeft: 10 }} />
                 </a>
@@ -234,7 +179,6 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           </div>
         ))}
         
-        {/* Affichage de l'espace total utilisé */}
         <div style={{ marginTop: "20px", fontSize: "14px", color: "#555" }}>
           Total Storage Used: {formatFileSize(totalStorageUsed)}
         </div>
@@ -242,13 +186,7 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
-MultiFileDropzone.displayName = "MultiFileDropzone";
 
-function formatFileSize(bytes?: number) {
-  if (!bytes) return "0 Bytes";
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
-}
+MultiFileDropzone.displayName = "MultiFileDropzone";
 
 export { MultiFileDropzone };
