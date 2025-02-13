@@ -8,10 +8,10 @@ import {
   EyeOutlined,
   DownloadOutlined,
 } from "@ant-design/icons";
-import * as React from "react";
+import { useState, forwardRef, useMemo } from "react";
 import { Upload, message } from "antd";
 import { DropzoneOptions, useDropzone } from "react-dropzone";
-import { formatFileSize, getErrorMessage } from "./error-utils";
+import { formatFileSize, getErrorMessage } from "./errorUtils";
 import {
   handlePreviewFile,
   createFileState,
@@ -21,6 +21,7 @@ import {
   handleFileRemove,
   checkMaxFilesLimit,
 } from "./file-operations";
+import { ProgressIndicator } from "./ProgressIndicator";
 
 export type FileState = {
   file: File;
@@ -37,14 +38,14 @@ type InputProps = {
   dropzoneOptions?: Omit<DropzoneOptions, "disabled">;
 };
 
-const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
+const MultiFileDropzone = forwardRef<HTMLInputElement, InputProps>(
   ({ dropzoneOptions, value, disabled, onFilesAdded, onChange }, ref) => {
-    const [customError, setCustomError] = React.useState<string>();
-    const [searchQuery, setSearchQuery] = React.useState<string>("");
-    const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
-    const [newName, setNewName] = React.useState<string>("");
+    const [customError, setCustomError] = useState<string>();
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [editingIndex, setEditingIndex] = useState<number | null>(null);
+    const [newName, setNewName] = useState<string>("");
 
-    const filteredFiles = React.useMemo(
+    const filteredFiles = useMemo(
       () => filterFilesByName(value, searchQuery),
       [value, searchQuery]
     );
@@ -52,7 +53,7 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     if (dropzoneOptions?.maxFiles && value?.length) {
       disabled = disabled ?? value.length >= dropzoneOptions.maxFiles;
     }
-
+    
     const {
       getRootProps,
       getInputProps,
@@ -74,7 +75,7 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
       ...dropzoneOptions,
     });
 
-    const errorMessage = React.useMemo(
+    const errorMessage = useMemo(
       () => getErrorMessage(fileRejections, dropzoneOptions),
       [fileRejections, dropzoneOptions]
     );
@@ -91,7 +92,7 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
       setNewName("");
     };
 
-    const totalStorageUsed = React.useMemo(
+    const totalStorageUsed = useMemo(
       () => calculateTotalStorageUsed(value),
       [value]
     );
@@ -115,8 +116,10 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
         >
           <input ref={ref} {...getInputProps()} />
           <p>Drag & drop or click to upload</p>
+          
           <UploadOutlined className="upload-icon" />
         </div>
+        {/* trouver un toast pour afficher les erreurs ANT D */}
         {customError || errorMessage ? (
           <p style={{ color: "red", fontSize: "12px" }}>{customError ?? errorMessage}</p>
         ) : null}
@@ -151,31 +154,9 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                 {formatFileSize(file.size)}
               </div>
             </div>
-            {progress === "PENDING" ? (
-              <DeleteOutlined
-                style={{ color: "red", cursor: "pointer" }}
-                onClick={() => void onChange?.(handleFileRemove(value ?? [], i))}
-              />
-            ) : progress === "ERROR" ? (
-              <ExclamationCircleOutlined style={{ color: "red" }} />
-            ) : progress !== "COMPLETE" ? (
-              <span>{Math.round(progress)}%</span>
-            ) : (
-              <>
-                <CheckCircleOutlined style={{ color: "green" }} />
-                <DeleteOutlined
-                  style={{ color: "red", cursor: "pointer", marginLeft: 10 }}
-                  onClick={() => void onChange?.(handleFileRemove(value ?? [], i))}
-                />
-                <EyeOutlined
-                  style={{ cursor: "pointer", color: "#1890ff", marginLeft: 10 }}
-                  onClick={() => handlePreviewFile(file)}
-                />
-                <a href={URL.createObjectURL(file)} download={file.name}>
-                  <DownloadOutlined style={{ cursor: "pointer", marginLeft: 10 }} />
-                </a>
-              </>
-            )}
+            {/* Voir comment améliore le SRP ---- éviter props drilling */}
+            <ProgressIndicator fileState={filteredFiles[i]} index={i} onRemove={() => handleFileRemove(value ?? [], i)} onPreview={() => handlePreviewFile(file)} />
+
           </div>
         ))}
         

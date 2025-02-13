@@ -1,11 +1,12 @@
 "use client";
 
-import { MultiFileDropzone, type FileState} from "../src/app/components/MultiFileDropzone/multi-file-dropzone";
+import { MultiFileDropzone, type FileState } from "../src/app/components/MultiFileDropzone/MultiFileDropzone";
+import { UploadTemplate } from '@/app/components/templates/UploadTemplate';
 import { useEdgeStore } from "@/lib/edgestore";
 import { useState } from "react";
-import { DownloadOutlined } from "@ant-design/icons"; // Icône Ant Design
+import { DownloadOutlined } from "@ant-design/icons";
 
-import { Button, Space } from "antd"; // Composants Ant Design pour les boutons et espaces
+import { Button, Space } from "antd";
 
 export default function Page() {
   const [fileStates, setFileStates] = useState<FileState[]>([]);
@@ -27,6 +28,16 @@ export default function Page() {
 
   return (
     <div className="p-4">
+      <UploadTemplate
+        maxFiles={5}
+        maxSize={5 * 1024 * 1024} // 5MB
+        acceptedFileTypes={[
+          'image/*',
+          'application/pdf',
+          '.doc,.docx',
+          '.txt'
+        ]}
+      />
       <MultiFileDropzone
         value={fileStates}
         onChange={(files) => {

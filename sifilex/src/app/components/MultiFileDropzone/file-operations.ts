@@ -1,4 +1,7 @@
-import { FileState } from './multi-file-dropzone';
+import { FileState } from './MultiFileDropzone';
+
+const ALLOWED_IMAGE_FILES = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
+const ALLOWED_DOCUMENT_FILES = [""]
 
 export function handlePreviewFile(file: File) {
   const fileType = file.type;

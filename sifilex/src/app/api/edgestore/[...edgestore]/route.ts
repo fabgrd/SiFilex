@@ -33,18 +33,6 @@ async function createContext({ req }: CreateContextOptions): Promise<Context> {
 const es = initEdgeStore.context<Context>().create();
 
 const edgeStoreRouter = es.router({
-  myPublicImages: es
-    .imageBucket({
-      maxSize: 1024 * 1024 * 1, // 1MB
-    })
-    .input(
-      z.object({
-        type: z.enum(["post", "profile"]),
-      })
-    )
-    // e.g. /post/my-file.jpg
-    .path(({ input }) => [{ type: input.type }]),
-
   myProtectedFiles: es
     .fileBucket()
     // e.g. /123/my-file.pdf
