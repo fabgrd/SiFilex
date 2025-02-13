@@ -5,6 +5,7 @@ import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   EditOutlined,
+  EyeOutlined, // Ajout de l'icône d'œil
 } from "@ant-design/icons";
 import * as React from "react";
 import { Upload, message } from "antd";
@@ -126,10 +127,28 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
       setNewName("");
     };
 
-    // Calculer l'espace total utilisé
     const totalStorageUsed = React.useMemo(() => {
       return (value ?? []).reduce((total, { file }) => total + file.size, 0);
     }, [value]);
+
+    // Fonction pour afficher un aperçu du fichier
+    const handlePreviewFile = (file: File) => {
+      const fileType = file.type;
+      const fileUrl = URL.createObjectURL(file);
+
+      if (fileType.startsWith("text") || file.name.endsWith(".md")) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const content = reader.result as string;
+          alert(`File content: \n${content}`);
+        };
+        reader.readAsText(file);
+      } else if (fileType === "application/pdf") {
+        window.open(fileUrl, "_blank");
+      } else {
+        alert("File type not supported for preview.");
+      }
+    };
 
     return (
       <div className="dropzone-container">
@@ -156,11 +175,6 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
         {customError || errorMessage ? (
           <p style={{ color: "red", fontSize: "12px" }}>{customError ?? errorMessage}</p>
         ) : null}
-
-        {/* Affichage de l'espace total utilisé */}
-        <div style={{ marginTop: "20px", fontSize: "14px", color: "#555" }}>
-          Total Storage Used: {formatFileSize(totalStorageUsed)}
-        </div>
 
         {filteredFiles?.map(({ file, progress, renamed }, i) => (
           <div key={i} className="file-preview mt-2">
@@ -206,10 +220,19 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                   style={{ color: "red", cursor: "pointer", marginLeft: 10 }}
                   onClick={() => handleRemoveFile(i)}
                 />
+                <EyeOutlined
+                  style={{ cursor: "pointer", color: "#1890ff", marginLeft: 10 }}
+                  onClick={() => handlePreviewFile(file)}
+                />
               </>
             )}
           </div>
+          
         ))}
+         {/* Affichage de l'espace total utilisé */}
+         <div style={{ marginTop: "20px", fontSize: "14px", color: "#555" }}>
+          Total Storage Used: {formatFileSize(totalStorageUsed)}
+        </div>
       </div>
     );
   }
