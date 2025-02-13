@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import localFont from "next/font/local";
 import "./styles/globals.css";
 import SessionWrapper from "../../components/SessionWrapper";
+import { EdgeStoreProvider } from "../lib/edgestore";
 
 // Importation de la police
 const apfelGrotezk = localFont({
@@ -41,7 +42,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <SessionWrapper>
-        <body className={`${apfelGrotezk.variable}`}>{children}</body>
+        <body className={`${apfelGrotezk.variable}`}>
+          <EdgeStoreProvider>
+            {children}
+          </EdgeStoreProvider>
+        </body>
       </SessionWrapper>
     </html>
   );
