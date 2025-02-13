@@ -15,7 +15,7 @@ function createContext({ req }: CreateContextOptions): Context {
   // const session = getSession(req);
   return {
     userId: "1234",
-    userRole: "user",
+    userRole: "admin",
   };
 }
 

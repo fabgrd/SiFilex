@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import Navbar from './Navbar';
 import LoginButtons from './LoginButtons';
 import Upload from './Upload';
+import ProtectedFiles from './ProtectedFiles';
 
 const Dashboard = () => {
   const { data: session } = useSession();
@@ -13,7 +14,7 @@ const Dashboard = () => {
       {session ? (
         <div>
           <Navbar />
-          <Upload />
+          <ProtectedFiles />
         </div>
         // ... existing code ...
       ) : (

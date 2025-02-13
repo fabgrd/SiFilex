@@ -93,40 +93,27 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     }, [fileRejections, dropzoneOptions]);
 
     return (
-      <div>
-        <div {...getRootProps({
-          style: {
-            border: "2px dashed #d9d9d9",
-            padding: "20px",
-            textAlign: "center",
-            borderRadius: "8px",
-            cursor: disabled ? "not-allowed" : "pointer",
-            backgroundColor: isDragReject ? "#ffccc7" : isDragAccept ? "#d9f7be" : "#fafafa",
-          }
-        })}>
+      <div className="dropzone-container">
+        <div
+          {...getRootProps({
+            className: "dropzone",
+            style: {
+              backgroundColor: isDragReject ? "#ffccc7" : isDragAccept ? "#013122" : "#000000",
+            },
+          })}
+        >
           <input ref={ref} {...getInputProps()} />
-          <UploadOutlined style={{ fontSize: "24px", color: "#1890ff" }} />
-          <p>Drag & drop or click to upload</p>
+          <UploadOutlined className="upload-icon" />
+          <p className="upload-message">Drag & drop or click to upload</p>
         </div>
         {customError || errorMessage ? (
           <p style={{ color: "red", fontSize: "12px" }}>{customError ?? errorMessage}</p>
         ) : null}
 
         {value?.map(({ file, progress }, i) => (
-          <div
-            key={i}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "10px",
-              border: "1px solid #d9d9d9",
-              borderRadius: "5px",
-              marginTop: "5px",
-              gap: "10px",
-            }}
-          >
-            <FileOutlined style={{ fontSize: "20px" }} />
-            <div style={{ flex: 1 }}>
+          <div key={i} className="image-preview mt-2">
+            <FileOutlined className="upload- mt-2" />
+            <div>
               <div>{file.name}</div>
               <div style={{ fontSize: "12px", color: "#8c8c8c" }}>{formatFileSize(file.size)}</div>
             </div>
