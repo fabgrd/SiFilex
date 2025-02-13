@@ -14,7 +14,7 @@ export type FileState = {
   file: File;
   key: string;
   progress: "PENDING" | "COMPLETE" | "ERROR" | number;
-  renamed?: string; // Ajout du champ pour stocker le nom du fichier renommé
+  renamed?: string;
 };
 
 type InputProps = {
@@ -43,6 +43,15 @@ const ERROR_MESSAGES = {
 const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
   ({ dropzoneOptions, value, disabled, onFilesAdded, onChange }, ref) => {
     const [customError, setCustomError] = React.useState<string>();
+    const [searchQuery, setSearchQuery] = React.useState<string>("");
+
+    // Filtrage des fichiers selon la recherche
+    const filteredFiles = React.useMemo(() => {
+      return (value ?? []).filter(({ file, renamed }) => {
+        const fileName = renamed || file.name;
+        return fileName.toLowerCase().includes(searchQuery.toLowerCase());
+      });
+    }, [value, searchQuery]);
 
     if (dropzoneOptions?.maxFiles && value?.length) {
       disabled = disabled ?? value.length >= dropzoneOptions.maxFiles;
@@ -119,6 +128,14 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="dropzone-container">
+        {/* Champ de recherche */}
+        <input
+          type="text"
+          placeholder="Rechercher par nom de fichier"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ padding: "8px", width: "100%", marginBottom: "15px" }}
+        />
         <div
           {...getRootProps({
             className: "dropzone",
@@ -135,7 +152,7 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           <p style={{ color: "red", fontSize: "12px" }}>{customError ?? errorMessage}</p>
         ) : null}
 
-        {value?.map(({ file, progress, renamed }, i) => (
+        {filteredFiles?.map(({ file, progress, renamed }, i) => (
           <div key={i} className="file-preview mt-2">
             <FileOutlined className="file-icon" />
             <div>
@@ -166,7 +183,7 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
             {progress === "PENDING" ? (
               <DeleteOutlined
                 style={{ color: "red", cursor: "pointer" }}
-                onClick={() => void onChange?.(value.filter((_, index) => index !== i))}
+                onClick={() => void onChange?.(value?.filter((_, index) => index !== i) ?? [])}
               />
             ) : progress === "ERROR" ? (
               <ExclamationCircleOutlined style={{ color: "red" }} />
