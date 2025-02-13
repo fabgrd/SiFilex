@@ -6,23 +6,26 @@ import {
 import { z } from "zod";
 import { authOptions } from "../../../../../lib/authOptions";
 import { getServerSession } from "next-auth";
+import {createHash} from "crypto";
 
 type Context = {
   userId: string;
   userRole: "admin" | "user";
 };
 
-async function createContext({ req }: CreateContextOptions):  Promise<Context> {
-  // get the session from your auth provider
+async function createContext({ req }: CreateContextOptions): Promise<Context> {
   const session = await getServerSession(authOptions);
   console.log("EMAIL : ", session?.user?.email);
-  
-  if (!session) {
+
+  if (!session?.user?.email) {
     throw new Error("Unauthorized");
   }
-  // const session = getSession(req);
+
+  const hashedEmail = createHash("sha256").update(session.user.email, "utf-8").digest("hex");
+  console.log("HASHED EMAIL : ", hashedEmail);
+
   return {
-    userId: '123',
+    userId: hashedEmail,
     userRole: "admin",
   };
 }

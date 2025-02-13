@@ -14,6 +14,7 @@
     "@edgestore/react": "^0.2.2",
     "@edgestore/server": "^0.2.2",
     "antd": "4.24.16",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "next": "14.2.24",
     "next-auth": "^4.24.11",
