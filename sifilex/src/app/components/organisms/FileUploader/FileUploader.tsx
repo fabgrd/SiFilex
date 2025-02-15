@@ -7,6 +7,7 @@ import { DropzoneArea } from '@/app/components/molecules/DropzoneArea';
 import { FileItem } from '@/app/components/molecules/FileItem';
 import { useFileOperations } from '@/app/lib/hooks/useFileOperations';
 import { formatFileSize } from '@/app/lib/utils/fileUtils';
+import { useEdgeStore } from "@/lib/edgestore";
 
 export interface FileUploaderProps {
   maxFiles?: number;
@@ -21,6 +22,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { files, addFiles, error } = useFileOperations();
+  const { edgestore } = useEdgeStore();
 
   const filteredFiles = files.filter(file => 
     (file.renamed || file.file.name)

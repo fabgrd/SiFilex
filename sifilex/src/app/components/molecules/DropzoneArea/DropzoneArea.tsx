@@ -4,30 +4,48 @@ import { Upload, message } from 'antd';
 import type { UploadProps } from 'antd';
 
 export interface DropzoneAreaProps {
-  multiple?: boolean;
+  options?: {
+    maxFiles?: number;
+    maxSize?: number;
+    accept?: string[];
+  };
   disabled?: boolean;
   onDrop: (files: File[]) => void;
 }
 
-export const DropzoneArea: React.FC<DropzoneAreaProps> = ({ multiple = true, disabled = false, onDrop }) => {
+export const DropzoneArea: React.FC<DropzoneAreaProps> = ({ options, disabled = false, onDrop }) => {
+  const { maxFiles, maxSize, accept } = options || {};
+
   const props: UploadProps = {
     name: 'file',
-    multiple,
+    multiple: maxFiles ? maxFiles > 1 : true,
     showUploadList: false,
+    accept: accept?.join(','), // Convertit le tableau de types acceptés en string
     beforeUpload: (file) => {
-      onDrop([file]);
-      return false; // Prevent auto upload
-    },
-    onChange(info) {
-      const { status, name } = info.file;
-      if (status === 'done') {
-        message.success(`${name} uploaded successfully.`);
-      } else if (status === 'error') {
-        message.error(`${name} upload failed.`);
+      if (maxSize && file.size > maxSize) {
+        message.error(`${file.name} is too large. Max size: ${maxSize / 1024 / 1024}MB.`);
+        return false;
       }
+      onDrop([file]);
+      return false; // Empêche l'upload automatique
     },
     onDrop(e) {
-      onDrop(Array.from(e.dataTransfer.files));
+      const droppedFiles = Array.from(e.dataTransfer.files);
+
+      if (maxFiles && droppedFiles.length > maxFiles) {
+        message.error(`You can only upload up to ${maxFiles} files.`);
+        return;
+      }
+
+      const validFiles = maxSize
+        ? droppedFiles.filter(file => file.size <= maxSize)
+        : droppedFiles;
+
+      if (validFiles.length > 0) {
+        onDrop(validFiles);
+      } else {
+        message.error('All selected files exceed the maximum size limit.');
+      }
     },
     disabled,
   };
@@ -38,8 +56,9 @@ export const DropzoneArea: React.FC<DropzoneAreaProps> = ({ multiple = true, dis
         <InboxOutlined />
       </p>
       <p className="ant-upload-text">Click or drag file to this area to upload</p>
-      <p className="ant-upload-hint">Supports single or multiple file uploads.</p>
+      <p className="ant-upload-hint">
+        {maxFiles ? `You can upload up to ${maxFiles} file(s).` : 'Supports multiple file uploads.'}
+      </p>
     </Upload.Dragger>
   );
 };
-

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import localFont from "next/font/local";
 import "./styles/globals.css";
 import 'antd/dist/antd.css'; 
-import SessionWrapper from "../../components/SessionWrapper";
+import SessionWrapper from "@/app/lib/providers/SessionWrapper";
 import { EdgeStoreProvider } from "../lib/edgestore";
 
 // Importation de la police
