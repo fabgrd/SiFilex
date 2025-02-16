@@ -6,11 +6,11 @@ const { Title, Text } = Typography;
 
 const AuthentificationTemplate: React.FC = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      <Card className="w-full max-w-md p-6 shadow-lg rounded-2xl" bordered={false}>
-        <Space direction="vertical" size="large" className="w-full text-center">
-          <Title level={2} className="text-gray-800">Bienvenue</Title>
-          <Text className="text-gray-600">Connectez-vous pour continuer</Text>
+    <div className="auth-container">
+      <Card className="auth-card" bordered={false}>
+        <Space direction="vertical" size="large" className="auth-space">
+          <Title level={2} style={{ fontSize: 24, color: "#7EE1BD" }}>Bienvenue sur SiFilex</Title>
+          <Text className="auth-text">Connectez-vous pour continuer</Text>
           <LoginButtons />
         </Space>
       </Card>

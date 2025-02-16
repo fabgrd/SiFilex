@@ -1,6 +1,6 @@
 import React from "react";
 import { Card } from "antd";
-import { ArrowDownOutlined } from "@ant-design/icons";
+import { FileProtectOutlined } from "@ant-design/icons";
 import { FileUploader } from "@/app/components/organisms/FileUploader";
 import { FileOperationsProvider } from "@/app/lib/context/FileOperationsContext";
 
@@ -16,8 +16,8 @@ export const UploadTemplate: React.FC<UploadTemplateProps> = (props) => {
       <Card
         title={
           <span className="upload-title">
-            <ArrowDownOutlined className="upload-icon" />
-           Déposez vos fichiers ici
+           Bienvenue sur SiFilex, votre plateforme de gestion de fichiers sécurisée
+            <FileProtectOutlined className="upload-icon" />
           </span>
         }
         className="upload-card"

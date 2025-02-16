@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Alert, Spin } from 'antd';
-import { FileState } from '@/app/lib/utils/types';
 import { SearchInput } from '@/app/components/molecules/SearchInput';
 import { DropzoneArea } from '@/app/components/molecules/DropzoneArea';
 import { FileItem } from '@/app/components/molecules/FileItem';
 import { useFileOperations } from '@/app/lib/hooks/useFileOperations';
 import { formatFileSize } from '@/app/lib/utils/fileUtils';
-import { useEdgeStore } from "@/lib/edgestore";
 
 export interface FileUploaderProps {
   maxFiles?: number;
@@ -34,16 +32,15 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="">
         <Spin size="large" tip="Loading files..." />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-
+    <div>
+      <div>
         <DropzoneArea
           options={{
             maxFiles,

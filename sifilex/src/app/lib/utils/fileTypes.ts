@@ -21,7 +21,7 @@ export const FILE_TYPES: Record<string, FileTypeConfig> = {
     },
     MD: {
         extension: '.md',
-        mimeType: '.md',
+        mimeType: 'text/markdown',
         description: 'Fichier Markdown',
         previewSupported: true
     },

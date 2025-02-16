@@ -1,6 +1,6 @@
 /* FileUploader styles */
 .file-uploader {
-    background-color: rgba(16, 19, 30, 0.4);
+    background-color: var(--background);
     border-radius: 12px;
     padding: 24px;
     margin: 24px;

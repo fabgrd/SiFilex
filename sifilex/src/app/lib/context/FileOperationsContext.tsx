@@ -4,6 +4,7 @@ import { createFileState } from '../utils/fileUtils';
 import { useEdgeStore } from '@/lib/edgestore';
 import { useSession } from 'next-auth/react';
 import { PreviewManager } from '../strategies/PreviewManager';
+import { message } from 'antd';
 
 interface FileOperationsContextType {
   files: FileState[];
@@ -13,7 +14,7 @@ interface FileOperationsContextType {
   handleFileRename: (index: number, newName: string) => void;
   handlePreviewFile: (file: FileState) => void;
   handleDownloadFile: (file: FileState) => void;
-
+  handleCopySecureUrl: (file: FileState) => Promise<void>;
   loading: boolean;
 }
 
@@ -29,7 +30,6 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
   const { data: session } = useSession();
   const previewManager = new PreviewManager();
 
-  // Charge les fichiers depuis localStorage quand la session est disponible
   useEffect(() => {
     if (session?.user?.email) {
       const userKey = `${STORAGE_KEY}-${session.user.email}`;
@@ -96,7 +96,7 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
             )
           );
         } catch (error: any) {
-          // Gestion détaillée des erreurs
+          // Gestion  des erreurs
           let errorMessage = 'Une erreur est survenue lors du téléchargement';
 
           if (error.message?.includes('size')) {
@@ -107,20 +107,17 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
             errorMessage = 'Vous n\'êtes pas autorisé à télécharger des fichiers';
           }
 
-          // Mettre à jour l'état du fichier avec l'erreur
           setFiles(prev =>
             prev.map(f =>
               f.key === fileState.key
                 ? {
                   ...f,
                   progress: 'ERROR',
-                  error: errorMessage // Ajoutez error au type FileState
+                  error: errorMessage
                 }
                 : f
             )
           );
-
-          // Afficher l'erreur générale
           setError(errorMessage);
         }
       }
@@ -179,6 +176,30 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
     }
   }, []);
 
+  const handleCopySecureUrl = useCallback(async (file: FileState) => {
+    if (!file.url) {
+      message.error('Aucune URL disponible');
+      return;
+    }
+  
+    try {
+      const directUrl = new URL(file.url);
+      const edgestoreUrl = directUrl.searchParams.get('url');
+      
+      if (!edgestoreUrl) {
+        message.error('URL invalide');
+        return;
+      }
+  
+      const decodedUrl = decodeURIComponent(edgestoreUrl);
+      await navigator.clipboard.writeText(decodedUrl);
+      message.success('URL copiée dans le presse-papier');
+    } catch (error) {
+      console.error('Error copying URL:', error);
+      message.error('Erreur lors de la copie de l\'URL');
+    }
+  }, []);
+
   const value = {
     files,
     error,
@@ -187,6 +208,7 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
     handleFileRename,
     handlePreviewFile,
     handleDownloadFile,
+    handleCopySecureUrl,
     loading
   };
 

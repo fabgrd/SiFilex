@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Input, Space, Tooltip, Progress, Card, Divider } from 'antd'; // Ajout de Card et Divider
-import { EditOutlined, DeleteOutlined, EyeOutlined, DownloadOutlined, CloudUploadOutlined, WarningOutlined } from '@ant-design/icons';
+import { Input, Progress, Card, Divider } from 'antd';
+import { EditOutlined, DeleteOutlined, EyeOutlined, DownloadOutlined, LinkOutlined } from '@ant-design/icons';
 import { FileIcon } from '@/app/components/atoms/FileIcon';
 import { ActionButton } from '@/app/components/atoms/ActionButton';
 import { useFileOperations } from '@/app/lib/hooks/useFileOperations';
@@ -15,7 +15,7 @@ export interface FileItemProps {
 export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(file.renamed || file.file.name);
-  const { handleFileRemove, handleFileRename, handlePreviewFile, handleDownloadFile } = useFileOperations();
+  const { handleFileRemove, handleFileRename, handlePreviewFile, handleDownloadFile, handleCopySecureUrl  } = useFileOperations();
 
   const handleSave = () => {
     handleFileRename(index, newName);
@@ -97,6 +97,13 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
             disabled={typeof file.progress === 'number'}
             className="action-button"
           />
+          <ActionButton
+            icon={<LinkOutlined />}
+            onClick={() => handleCopySecureUrl(file)}
+            tooltip="Copier le lien sécurisé"
+            disabled={!file.url}
+            className="action-button"
+          />
           <Divider type="vertical" className="action-button" />
           <ActionButton
             icon={<DeleteOutlined />}
@@ -109,7 +116,7 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
       </div>
 
       {file.error && (
-        <div className="mt-2 text-red-500 text-sm">
+        <div className="file-error">
           {file.error}
         </div>
       )}

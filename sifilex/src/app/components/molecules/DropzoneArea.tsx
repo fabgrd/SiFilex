@@ -39,7 +39,6 @@ export const DropzoneArea: React.FC<DropzoneAreaProps> = ({ options, disabled = 
     showUploadList: false,
     accept: accept?.join(','),
     beforeUpload: (file) => {
-      // Vérification du type de fichier
       if (!validateFileType(file)) {
         message.error(
           `Le fichier "${file.name}" n'est pas supporté. Types acceptés : ${accept?.join(', ')}`
@@ -70,7 +69,7 @@ export const DropzoneArea: React.FC<DropzoneAreaProps> = ({ options, disabled = 
         return;
       }
 
-      // Vérification des types de fichiers
+      // vérification du types de fichiers
       const invalidTypeFiles = droppedFiles.filter(file => !validateFileType(file));
       if (invalidTypeFiles.length > 0) {
         message.error(
@@ -115,7 +114,7 @@ export const DropzoneArea: React.FC<DropzoneAreaProps> = ({ options, disabled = 
         {maxFiles && `Limite : ${maxFiles} fichier${maxFiles > 1 ? 's' : ''}`}
         {maxSize && ` • Taille max : ${formatMaxSize(maxSize)}`}
         {(accept ?? []).length > 0 && 
-          ` • Types acceptés : ${accept?.join(', ') || 'Tous les types'}`}
+          ` • Types acceptés : PDF, TXT, MD, DOC, DOCX, TOUS TYPES D'IMAGES (PNG, JPEG, GIF, SVG...)`}
       </p>
     </Upload.Dragger>
   );

@@ -1,9 +1,8 @@
 'use client';
 
 import { signOut, useSession } from 'next-auth/react';
-import { Avatar, Button, Space, Typography, Divider } from 'antd';
+import { Button, Typography } from 'antd';
 import Image from "next/image";
-import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
 const { Title } = Typography;

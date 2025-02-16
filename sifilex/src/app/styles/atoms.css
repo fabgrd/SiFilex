@@ -6,17 +6,17 @@
     transition: all 0.3s ease;
 }
 
+.action-button:hover {
+    background: var(--hover-color);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
 .action-button-danger {
     background: transparent;
     border: 1px solid var(--error-color);
     color: var(--error-color);
     transition: all 0.3s ease;
-}
-
-.action-button:hover {
-    background: var(--hover-color);
-    border-color: var(--primary);
-    color: var(--primary);
 }
 
 .action-button-danger:hover {
@@ -61,6 +61,7 @@
 /* ProgressBar styles */
 .progress-bar {
     color: var(--primary);
+
     .ant-progress-inner {
         background-color: var(--border-color);
     }
@@ -68,4 +69,74 @@
     .ant-progress-bg {
         background-color: var(--primary);
     }
+}
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--background);
+}
+
+.loader-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.loader-text {
+    font-size: 1.125rem;
+    color: var(--primary);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.google-button {
+    background-color: var(--primary);
+    color: var(--background);
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.google-button:hover {
+    background-color: rgba(83, 160, 132, 0.8);
+    color: var(--secondary);
+    border-color: var(--primary);
+}
+
+.github-button {
+    background-color: var(--secondary);
+    color: var(--background);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.github-button:hover {
+    background-color: #252525;
+    color: var(--text-primary);
+    border-color: #cbcbcb;
+}
+
+.ant-space-item {
+    margin: 0 8px;
+}
+
+.ant-typography {
+    color: var(--text-primary);
+    text-align: center;
 }

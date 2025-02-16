@@ -72,6 +72,9 @@
     align-items: center;
 }
 
+.file-error {
+    color: var(--error-color);
+}
 
 /* SearchInput styles */
 .search-input {

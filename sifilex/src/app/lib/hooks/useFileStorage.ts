@@ -15,9 +15,9 @@ export const useFileStorage = () => {
     const userId = getUserId();
     if (!userId) throw new Error('User not authenticated');
 
-    const res = await edgestore.userFiles.upload({  // Changé de myProtectedFiles à userFiles
+    const res = await edgestore.userFiles.upload({
       file,
-      input: {  // Changé de options à input pour correspondre à notre configuration
+      input: {
         type: file.type.startsWith('image/') ? 'image' : 'document',
         name: file.name,
       },
@@ -36,8 +36,8 @@ export const useFileStorage = () => {
 
   const deleteFile = async (url: string) => { 
     if (!url) return;
-    await edgestore.userFiles.delete({  // Changé de myProtectedFiles à userFiles
-      url: url,  // Utilise l'URL plutôt que le path
+    await edgestore.userFiles.delete({
+      url: url,
     });
   };
 

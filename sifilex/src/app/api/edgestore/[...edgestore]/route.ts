@@ -5,7 +5,7 @@ import {
 } from "@edgestore/server/adapters/next/app";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/utils/authOptions";
-import { getAcceptedFileTypes, GLOBAL_MAX_FILE_SIZE, MAX_FILES } from '@/app/lib/utils/fileTypes';
+import { getAcceptedFileTypes, GLOBAL_MAX_FILE_SIZE } from '@/app/lib/utils/fileTypes';
 import { z } from "zod";
 import { createHash } from "crypto";
 
