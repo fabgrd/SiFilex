@@ -41,33 +41,37 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   }
 
   return (
-    <div className="space-y-4">
-      <SearchInput
-        value={searchQuery}
-        onChange={setSearchQuery}
-        className="mb-4"
-      />
+    <div className="space-y-6">
+      <div className="bg-white p-4 rounded-lg shadow-sm">
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          className="mb-4"
+        />
 
-      <DropzoneArea
-        options={{
-          maxFiles,
-          maxSize,
-          accept: acceptedFileTypes
-        }}
-        disabled={maxFiles ? files.length >= maxFiles : false}
-        onDrop={addFiles}
-      />
+        <DropzoneArea
+          options={{
+            maxFiles,
+            maxSize,
+            accept: acceptedFileTypes
+          }}
+          disabled={maxFiles ? files.length >= maxFiles : false}
+          onDrop={addFiles}
+        />
+      </div>
 
       {error && (
         <Alert
-          message={error}
+          message="Erreur"
+          description={error}
           type="error"
           showIcon
-          className="mt-4"
+          closable
+          className="my-4"
         />
       )}
 
-      <div className="mt-6 space-y-2">
+      <div className="space-y-4">
         {filteredFiles.map((file, index) => (
           <FileItem
             key={file.key}
@@ -77,9 +81,11 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
         ))}
       </div>
 
-      <div className="text-right text-gray-500 text-sm">
-        Total Storage Used: {formatFileSize(totalSize)}
-      </div>
+      {files.length > 0 && (
+        <div className="text-right text-gray-500 text-sm bg-white p-4 rounded-lg shadow-sm">
+          Espace total utilisé : {formatFileSize(totalSize)}
+        </div>
+      )}
     </div>
   );
 };

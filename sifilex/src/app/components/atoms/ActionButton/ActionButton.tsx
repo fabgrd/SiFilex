@@ -8,6 +8,7 @@ export interface ActionButtonProps {
   tooltip: string;
   placement?: TooltipPlacement;
   className?: string;
+  disabled?: boolean;
 }
 
 export const ActionButton: React.FC<ActionButtonProps> = ({

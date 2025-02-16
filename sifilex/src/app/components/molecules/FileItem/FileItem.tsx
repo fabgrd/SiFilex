@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Input, Space, Tooltip } from 'antd';
+import { Input, Space, Tooltip, Progress, Card, Divider } from 'antd'; // Ajout de Card et Divider
 import { EditOutlined, DeleteOutlined, EyeOutlined, DownloadOutlined, CloudUploadOutlined, WarningOutlined } from '@ant-design/icons';
 import { FileIcon } from '@/app/components/atoms/FileIcon';
 import { ActionButton } from '@/app/components/atoms/ActionButton';
-import { ProgressBar } from '@/app/components/atoms/ProgressBar';
 import { useFileOperations } from '@/app/lib/hooks/useFileOperations';
 import { FileState } from '@/app/lib/utils/types';
 import { formatFileSize } from '@/app/lib/utils/fileUtils';
@@ -26,48 +25,30 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
   const handleDownload = () => {
     if (file.url) {
       window.open(file.url, '_blank');
-    } else {
-      // Si pas d'URL, afficher un message d'erreur ou désactiver le bouton
-      console.error('No URL available for download');
     }
   };
 
-  const getStatusIcon = () => {
-    if (file.progress === 'ERROR') {
-      return (
-        <Tooltip title={file.error || "Échec du téléchargement"}>
-          <WarningOutlined className="text-red-500" />
-        </Tooltip>
-      );
-    }
-    if (file.progress === 'COMPLETE') {
-      return (
-        <Tooltip title="Téléchargé avec succès">
-          <CloudUploadOutlined className="text-green-500" />
-        </Tooltip>
-      );
-    }
-    if (file.progress === 'PENDING') {
-      return (
-        <Tooltip title="En attente de téléchargement">
-          <CloudUploadOutlined className="text-gray-400" />
-        </Tooltip>
-      );
-    }
-    return null;
+  const getProgressStatus = () => {
+    if (file.progress === 'ERROR') return 'exception';
+    if (file.progress === 'COMPLETE') return 'success';
+    return 'active';
   };
 
   return (
-    <div className="flex items-center justify-between p-4 border-b border-gray-200">
-      {file.error && (
-        <div className="text-red-500 text-sm mt-1">
-          {file.error}
-        </div>
-      )}
-      <Space>
-        <FileIcon fileName={file.file.name} />
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
+    <Card 
+      className="mb-4 shadow-sm hover:shadow-md transition-shadow"
+      bodyStyle={{ padding: '12px' }}
+    >
+      <div className="flex justify-between items-start">
+        {/* Côté gauche - Informations du fichier */}
+        <div className="flex items-start space-x-3">
+          <div className="pt-1">
+            <FileIcon 
+              fileName={file.file.name} 
+              className="text-2xl text-blue-500"
+            />
+          </div>
+          <div className="flex flex-col min-w-0">
             {isEditing ? (
               <Input
                 value={newName}
@@ -77,47 +58,62 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
                 className="w-48"
               />
             ) : (
-              <>
-                <span className="font-medium">{file.renamed || file.file.name}</span>
-                {getStatusIcon()}
-              </>
+              <div className="font-medium text-gray-800 truncate max-w-xs">
+                {file.renamed || file.file.name}
+              </div>
+            )}
+            <div className="text-sm text-gray-500 mt-1">
+              {formatFileSize(file.file.size)}
+            </div>
+            {typeof file.progress === 'number' && (
+              <div className="mt-2 w-48">
+                <Progress 
+                  percent={Math.round(file.progress)} 
+                  size="small"
+                  status={getProgressStatus()}
+                  showInfo={true}
+                />
+              </div>
             )}
           </div>
-          <span className="text-sm text-gray-500">
-            {formatFileSize(file.file.size)}
-          </span>
         </div>
-      </Space>
 
-      <Space>
-        {typeof file.progress === 'number' && <ProgressBar progress={file.progress} />}
-        
-        <ActionButton
-          icon={<EditOutlined />}
-          onClick={() => setIsEditing(true)}
-          tooltip="Rename"
-        />
-        
-        <ActionButton
-          icon={<EyeOutlined />}
-          onClick={() => handlePreviewFile(file)}
-          tooltip="Preview"
-        />
-        
-        <ActionButton
-          icon={<DownloadOutlined />}
-          onClick={handleDownload}
-          tooltip="Download"
-          // disabled={!file.url}  // Désactive le bouton si pas d'URL
-        />
-        
-        <ActionButton
-          icon={<DeleteOutlined />}
-          onClick={() => handleFileRemove(index)}
-          tooltip="Delete"
-          className="text-red-500"
-        />
-      </Space>
-    </div>
+        {/* Côté droit - Actions */}
+        <div className="flex items-center space-x-1">
+          <ActionButton
+            icon={<EditOutlined />}
+            onClick={() => setIsEditing(true)}
+            tooltip="Renommer"
+            disabled={typeof file.progress === 'number'}
+          />
+          <ActionButton
+            icon={<EyeOutlined />}
+            onClick={() => handlePreviewFile(file)}
+            tooltip="Aperçu"
+            disabled={!file.url}
+          />
+          <ActionButton
+            icon={<DownloadOutlined />}
+            onClick={handleDownload}
+            tooltip="Télécharger"
+            disabled={!file.url}
+          />
+          <Divider type="vertical" className="h-6 bg-gray-200" />
+          <ActionButton
+            icon={<DeleteOutlined />}
+            onClick={() => handleFileRemove(index)}
+            tooltip="Supprimer"
+            className="text-red-500 hover:text-red-700"
+            disabled={typeof file.progress === 'number'}
+          />
+        </div>
+      </div>
+
+      {file.error && (
+        <div className="mt-2 text-red-500 text-sm">
+          {file.error}
+        </div>
+      )}
+    </Card>
   );
 };
