@@ -1,6 +1,5 @@
-// src/components/organisms/FileUploader/FileUploader.tsx
 import React, { useState } from 'react';
-import { Alert } from 'antd';
+import { Alert, Spin } from 'antd';
 import { FileState } from '@/app/lib/utils/types';
 import { SearchInput } from '@/app/components/molecules/SearchInput';
 import { DropzoneArea } from '@/app/components/molecules/DropzoneArea';
@@ -21,16 +20,21 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   acceptedFileTypes
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { files, addFiles, error } = useFileOperations();
-  const { edgestore } = useEdgeStore();
+  const { files, addFiles, error, loading } = useFileOperations();
 
   const filteredFiles = files.filter(file => 
     (file.renamed || file.file.name)
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase())
   );
 
   const totalSize = files.reduce((sum, file) => sum + file.file.size, 0);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Spin size="large" tip="Loading files..." />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

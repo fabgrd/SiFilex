@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Input, Space } from 'antd';
-import { EditOutlined, DeleteOutlined, EyeOutlined, DownloadOutlined } from '@ant-design/icons';
+import { Input, Space, Tooltip } from 'antd';
+import { EditOutlined, DeleteOutlined, EyeOutlined, DownloadOutlined, CloudUploadOutlined, WarningOutlined } from '@ant-design/icons';
 import { FileIcon } from '@/app/components/atoms/FileIcon';
 import { ActionButton } from '@/app/components/atoms/ActionButton';
 import { ProgressBar } from '@/app/components/atoms/ProgressBar';
@@ -22,11 +22,29 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
     setIsEditing(false);
   };
 
+  const getStatusIcon = () => {
+    if (file.progress === 'ERROR') {
+      return (
+        <Tooltip title="Upload failed">
+          <WarningOutlined className="text-red-500" />
+        </Tooltip>
+      );
+    }
+    if (file.progress === 'COMPLETE') {
+      return (
+        <Tooltip title="Uploaded to cloud">
+          <CloudUploadOutlined className="text-green-500" />
+        </Tooltip>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="flex items-center justify-between p-4 border-b border-gray-200">
       <Space>
         <FileIcon fileName={file.file.name} />
-        <div>
+        <div className="flex items-center gap-2">
           {isEditing ? (
             <Input
               value={newName}
@@ -36,7 +54,10 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
               className="w-48"
             />
           ) : (
-            <span className="font-medium">{file.renamed || file.file.name}</span>
+            <>
+              <span className="font-medium">{file.renamed || file.file.name}</span>
+              {getStatusIcon()}
+            </>
           )}
         </div>
       </Space>
@@ -52,19 +73,23 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
         
         <ActionButton
           icon={<EyeOutlined />}
-          onClick={() => handlePreviewFile(file.file)}
+          onClick={() => handlePreviewFile(file)}
           tooltip="Preview"
         />
         
         <ActionButton
           icon={<DownloadOutlined />}
           onClick={() => {
-            const url = URL.createObjectURL(file.file);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = file.renamed || file.file.name;
-            a.click();
-            URL.revokeObjectURL(url);
+            if (file.url) {
+              window.open(file.url, '_blank');
+            } else {
+              const url = URL.createObjectURL(file.file);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = file.renamed || file.file.name;
+              a.click();
+              URL.revokeObjectURL(url);
+            }
           }}
           tooltip="Download"
         />
