@@ -34,7 +34,7 @@ export const useFileStorage = () => {
     };
   };
 
-  const deleteFile = async (url: string) => {  // Changé de path à url
+  const deleteFile = async (url: string) => { 
     if (!url) return;
     await edgestore.userFiles.delete({  // Changé de myProtectedFiles à userFiles
       url: url,  // Utilise l'URL plutôt que le path

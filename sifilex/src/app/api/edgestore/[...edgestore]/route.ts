@@ -35,7 +35,7 @@ const es = initEdgeStore.context<Context>().create();
 const edgeStoreRouter = es.router({
   userFiles: es
     .fileBucket({
-      maxSize: 1024 * 1024 * 10, // 10MB
+      maxSize: 1024 * 1024 * 10,
       accept: ['image/*', 'application/pdf', '.doc', '.docx', '.txt', '.md'],
     })
     .input(
@@ -61,7 +61,13 @@ const edgeStoreRouter = es.router({
           userId: { path: "userId" },
         },
       ],
-    }),
+    })
+    .beforeUpload(({ ctx }) => {
+      return !!ctx.userId;
+    })
+    .beforeDelete(({ ctx, fileInfo }) => {
+      return ctx.userId === fileInfo.metadata?.userId;
+    })
 });
 
 const handler = createEdgeStoreNextHandler({

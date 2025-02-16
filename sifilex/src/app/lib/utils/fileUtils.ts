@@ -9,7 +9,11 @@ export const formatFileSize = (bytes: number): string => {
 };
 
 export const createFileState = (file: File): FileState => ({
-  file,
+  file: {
+    name: file.name,
+    size: file.size,
+    type: file.type
+  },
   key: Math.random().toString(36).slice(2),
   progress: 'PENDING'
 });

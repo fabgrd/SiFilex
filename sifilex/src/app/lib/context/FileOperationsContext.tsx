@@ -29,16 +29,12 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
   useEffect(() => {
     if (session?.user?.email) {
       const userKey = `${STORAGE_KEY}-${session.user.email}`;
-      console.log('🔹 User Key :', userKey);
-
       const savedFiles = localStorage.getItem(userKey);
       if (savedFiles) {
         try {
-          const parsed = JSON.parse(savedFiles);
-          console.log('📂 Loaded files from localStorage:', parsed);
-          setFiles(parsed);
+          setFiles(JSON.parse(savedFiles));
         } catch (e) {
-          console.error('❌ Error parsing saved files:', e);
+          console.error('Error parsing saved files:', e);
         }
       }
       setLoading(false);
@@ -49,8 +45,7 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
   useEffect(() => {
     if (session?.user?.email && !loading) {
       const userKey = `${STORAGE_KEY}-${session.user.email}`;
-      console.log('💾 Saving files to localStorage:', files);
-      localStorage.setItem(userKey, JSON.stringify(files)); 
+      localStorage.setItem(userKey, JSON.stringify(files));
     }
   }, [files, session, loading]);
 
@@ -60,12 +55,9 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
       return;
     }
 
-    console.log('➕ Adding new files:', newFiles);
-
     try {
       for (const file of newFiles) {
         const fileState = createFileState(file);
-        console.log('🆕 New File State:', fileState);
         setFiles(prev => [...prev, fileState]);
 
         try {
@@ -76,7 +68,6 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
               name: file.name,
             },
             onProgressChange: (progress) => {
-              console.log(`📊 Upload progress for ${file.name}:`, progress);
               setFiles(prev =>
                 prev.map(f =>
                   f.key === fileState.key ? { ...f, progress } : f
@@ -84,8 +75,6 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
               );
             },
           });
-
-          console.log('✅ Upload successful:', result);
 
           setFiles(prev =>
             prev.map(f =>
@@ -103,7 +92,6 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
             )
           );
         } catch (uploadError) {
-          console.error('❌ Upload error:', uploadError);
           setFiles(prev =>
             prev.map(f =>
               f.key === fileState.key ? { ...f, progress: 'ERROR' } : f
@@ -113,31 +101,17 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
       }
     } catch (err) {
       setError('Failed to upload files');
-      console.error('❌ Upload error (global catch):', err);
     }
   }, [edgestore, session]);
 
-  const handleFileRemove = useCallback(async (index: number) => {
-    const file = files[index];
-    console.log('🗑 Removing file:', file);
-
-    if (file.url) {
-      try {
-        await edgestore.userFiles.delete({
-          url: file.url,
-        });
-        console.log('✅ File deleted from storage:', file.url);
-      } catch (err) {
-        console.error('❌ Delete error:', err);
-        setError('Failed to delete file');
-        return;
-      }
-    }
-    setFiles(prev => prev.filter((_, i) => i !== index));
-  }, [files, edgestore]);
+  const handleFileRemove = useCallback(
+    async (index: number) => {
+      setFiles(prev => prev.filter((_, i) => i !== index));
+    },
+    []
+  );
 
   const handleFileRename = useCallback((index: number, newName: string) => {
-    console.log(`✏️ Renaming file at index ${index} to:`, newName);
     setFiles(prev =>
       prev.map((file, i) =>
         i === index ? { ...file, renamed: newName } : file
@@ -146,7 +120,6 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
   }, []);
 
   const handlePreviewFile = useCallback((file: FileState) => {
-    console.log('👀 Previewing file:', file);
     if (file.url) {
       window.open(file.url, '_blank');
     } else {

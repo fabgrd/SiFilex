@@ -22,11 +22,14 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const { files, addFiles, error, loading } = useFileOperations();
 
-  const filteredFiles = files.filter(file => 
-    (file.renamed || file.file.name)
-  );
+  const filteredFiles = searchQuery
+  ? files.filter(file => {
+      const fileName = file.renamed || file.file?.name || '';
+      return fileName.toLowerCase().includes(searchQuery.toLowerCase());
+    })
+  : files;
 
-  const totalSize = files.reduce((sum, file) => sum + file.file.size, 0);
+  const totalSize = files.reduce((sum, file) => sum + (file.file.size || 0), 0);
 
   if (loading) {
     return (

@@ -6,6 +6,7 @@ import { ActionButton } from '@/app/components/atoms/ActionButton';
 import { ProgressBar } from '@/app/components/atoms/ProgressBar';
 import { useFileOperations } from '@/app/lib/hooks/useFileOperations';
 import { FileState } from '@/app/lib/utils/types';
+import { formatFileSize } from '@/app/lib/utils/fileUtils';
 
 export interface FileItemProps {
   file: FileState;
@@ -20,6 +21,15 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
   const handleSave = () => {
     handleFileRename(index, newName);
     setIsEditing(false);
+  };
+
+  const handleDownload = () => {
+    if (file.url) {
+      window.open(file.url, '_blank');
+    } else {
+      // Si pas d'URL, afficher un message d'erreur ou désactiver le bouton
+      console.error('No URL available for download');
+    }
   };
 
   const getStatusIcon = () => {
@@ -44,21 +54,26 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
     <div className="flex items-center justify-between p-4 border-b border-gray-200">
       <Space>
         <FileIcon fileName={file.file.name} />
-        <div className="flex items-center gap-2">
-          {isEditing ? (
-            <Input
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              onBlur={handleSave}
-              onPressEnter={handleSave}
-              className="w-48"
-            />
-          ) : (
-            <>
-              <span className="font-medium">{file.renamed || file.file.name}</span>
-              {getStatusIcon()}
-            </>
-          )}
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            {isEditing ? (
+              <Input
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                onBlur={handleSave}
+                onPressEnter={handleSave}
+                className="w-48"
+              />
+            ) : (
+              <>
+                <span className="font-medium">{file.renamed || file.file.name}</span>
+                {getStatusIcon()}
+              </>
+            )}
+          </div>
+          <span className="text-sm text-gray-500">
+            {formatFileSize(file.file.size)}
+          </span>
         </div>
       </Space>
 
@@ -79,19 +94,9 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
         
         <ActionButton
           icon={<DownloadOutlined />}
-          onClick={() => {
-            if (file.url) {
-              window.open(file.url, '_blank');
-            } else {
-              const url = URL.createObjectURL(file.file);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = file.renamed || file.file.name;
-              a.click();
-              URL.revokeObjectURL(url);
-            }
-          }}
+          onClick={handleDownload}
           tooltip="Download"
+          // disabled={!file.url}  // Désactive le bouton si pas d'URL
         />
         
         <ActionButton
