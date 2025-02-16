@@ -1,13 +1,21 @@
 'use client';
 
+import { Spin } from 'antd';
 import { useSession } from 'next-auth/react';
-import { Navbar } from '@/app/components/organisms/Navbar';
-import { LoginButtons } from '@/app/components/atoms/LoginButtons';
+import Navbar from '@/app/components/organisms/Navbar';
+import AuthentificationTemplate from './components/templates/AuthentificationTemplate';
 import { UploadTemplate } from '@/app/components/templates/UploadTemplate';
 import { getAcceptedFileTypes, GLOBAL_MAX_FILE_SIZE, MAX_FILES } from '@/app/lib/utils/fileTypes';
+import Loader from '@/app/components/atoms/Loader';
 
 export default function Home() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    return (
+      <Loader />
+    );
+  }
 
   return (
     <div>
@@ -21,8 +29,8 @@ export default function Home() {
           />
         </div>
       ) : (
-        <LoginButtons />
+        <AuthentificationTemplate />
       )}
     </div>
   );
-};
+}

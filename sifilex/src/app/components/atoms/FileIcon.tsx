@@ -8,13 +8,13 @@ export interface FileIconProps {
 
 export const FileIcon: React.FC<FileIconProps> = ({ fileName, className }) => {
   switch (true) {
-    case fileName?.endsWith('.pdf'):
+    case /\.pdf$/i.test(fileName):
       return <FilePdfOutlined className={className} />;
-    case /\.(doc|docx)$/.test(fileName):
+    case /\.(doc|docx)$/i.test(fileName):
       return <FileWordOutlined className={className} />;
-    case /\.(txt|md)$/.test(fileName):
+    case /\.(txt|md)$/i.test(fileName):
       return <FileTextOutlined className={className} />;
-    case /\.(jpg|jpeg|png|gif)$/.test(fileName):
+    case /\.(jpg|jpeg|png|gif|svg)$/i.test(fileName):
       return <FileImageOutlined className={className} />;
     default:
       return <FileOutlined className={className} />;

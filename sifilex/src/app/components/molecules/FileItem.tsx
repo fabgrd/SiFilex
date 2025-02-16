@@ -35,7 +35,7 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
   };
 
   return (
-    <Card 
+    <Card
       className="mb-4 shadow-sm hover:shadow-md transition-shadow"
       bodyStyle={{ padding: '12px' }}
     >
@@ -43,9 +43,9 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
         {/* Côté gauche - Informations du fichier */}
         <div className="flex items-start space-x-3">
           <div className="pt-1">
-            <FileIcon 
-              fileName={file.file.name} 
-              className="text-2xl text-blue-500"
+            <FileIcon
+              fileName={file.file.name}
+              className="text-4xl text-blue-500"
             />
           </div>
           <div className="flex flex-col min-w-0">
@@ -65,10 +65,21 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
             <div className="text-sm text-gray-500 mt-1">
               {formatFileSize(file.file.size)}
             </div>
+            <div className="text-sm text-gray-500 mt-1">
+              {file.metadata?.uploadedAt
+                ? new Date(file.metadata.uploadedAt).toLocaleString('fr-FR', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+                : 'Date inconnue'}
+            </div>
             {typeof file.progress === 'number' && (
               <div className="mt-2 w-48">
-                <Progress 
-                  percent={Math.round(file.progress)} 
+                <Progress
+                  percent={Math.round(file.progress)}
                   size="small"
                   status={getProgressStatus()}
                   showInfo={true}

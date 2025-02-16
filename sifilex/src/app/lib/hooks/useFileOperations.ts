@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { FileOperationsContext } from '../context/FileOperationsContext';
+import { FileOperationsContext } from '@/app/lib/context/FileOperationsContext';
 
 export const useFileOperations = () => {
   const context = useContext(FileOperationsContext);

@@ -2,7 +2,7 @@ import { PreviewStrategy } from './PreviewStrategy';
 
 export class DefaultPreviewStrategy implements PreviewStrategy {
     canHandle(fileType: string, fileName: string): boolean {
-      return true;  // Fallback strategy
+      return true;
     }
   
     preview(file: File | string): void {
