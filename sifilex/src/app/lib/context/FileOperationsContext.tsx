@@ -12,6 +12,8 @@ interface FileOperationsContextType {
   handleFileRemove: (index: number) => Promise<void>;
   handleFileRename: (index: number, newName: string) => void;
   handlePreviewFile: (file: FileState) => void;
+  handleDownloadFile: (file: FileState) => void;
+
   loading: boolean;
 }
 
@@ -56,12 +58,12 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
       setError('Vous devez être connecté pour télécharger des fichiers');
       return;
     }
-  
+
     try {
       for (const file of newFiles) {
         const fileState = createFileState(file);
         setFiles(prev => [...prev, fileState]);
-  
+
         try {
           const result = await edgestore.userFiles.upload({
             file,
@@ -77,26 +79,26 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
               );
             },
           });
-  
+
           setFiles(prev =>
             prev.map(f =>
               f.key === fileState.key
                 ? {
-                    ...f,
-                    progress: 'COMPLETE',
-                    url: result.url,
-                    metadata: {
-                      userId: session.user?.email || '',
-                      uploadedAt: new Date().toISOString(),
-                    },
-                  }
+                  ...f,
+                  progress: 'COMPLETE',
+                  url: result.url,
+                  metadata: {
+                    userId: session.user?.email || '',
+                    uploadedAt: new Date().toISOString(),
+                  },
+                }
                 : f
             )
           );
         } catch (error: any) {
           // Gestion détaillée des erreurs
           let errorMessage = 'Une erreur est survenue lors du téléchargement';
-          
+
           if (error.message?.includes('size')) {
             errorMessage = `Le fichier ${file.name} est trop volumineux. La taille maximale autorisée est de 10MB`;
           } else if (error.message?.includes('type')) {
@@ -104,20 +106,20 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
           } else if (error.message?.includes('unauthorized')) {
             errorMessage = 'Vous n\'êtes pas autorisé à télécharger des fichiers';
           }
-  
+
           // Mettre à jour l'état du fichier avec l'erreur
           setFiles(prev =>
             prev.map(f =>
               f.key === fileState.key
                 ? {
-                    ...f,
-                    progress: 'ERROR',
-                    error: errorMessage // Ajoutez error au type FileState
-                  }
+                  ...f,
+                  progress: 'ERROR',
+                  error: errorMessage // Ajoutez error au type FileState
+                }
                 : f
             )
           );
-  
+
           // Afficher l'erreur générale
           setError(errorMessage);
         }
@@ -154,6 +156,29 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
     }
   }, []);
 
+  const handleDownloadFile = useCallback((file: FileState) => {
+    if (!file.url) {
+      console.warn('No URL available for download');
+      return;
+    }
+
+    try {
+      const a = document.createElement("a");
+      a.style.display = 'none';
+      a.href = file.url;
+      a.download = file.renamed || file.file.name;
+
+      document.body.appendChild(a);
+      a.click();
+
+      requestAnimationFrame(() => {
+        document.body.removeChild(a);
+      });
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  }, []);
+
   const value = {
     files,
     error,
@@ -161,6 +186,7 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
     handleFileRemove,
     handleFileRename,
     handlePreviewFile,
+    handleDownloadFile,
     loading
   };
 

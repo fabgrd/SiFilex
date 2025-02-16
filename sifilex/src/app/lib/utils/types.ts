@@ -6,11 +6,7 @@ export interface FileMetadata {
 }
 
 export interface FileState {
-  file: {
-    name: string;
-    size: number;
-    type: string;
-  };
+  file: File;
   key: string;
   progress: FileProgress;
   renamed?: string;

@@ -101,17 +101,21 @@ export const DropzoneArea: React.FC<DropzoneAreaProps> = ({ options, disabled = 
   };
 
   return (
-    <Upload.Dragger {...props} className={disabled ? 'opacity-50 cursor-not-allowed' : ''}>
-      <p className="ant-upload-drag-icon">
+    <Upload.Dragger 
+      {...props} 
+      className={`dropzone-area ${disabled ? 'dropzone-disabled' : ''}`}
+    >
+      <p className="dropzone-icon">
         <InboxOutlined />
       </p>
-      <p className="ant-upload-text">
+      <p className="dropzone-text">
         Cliquez ou glissez-déposez vos fichiers ici
       </p>
-      <p className="ant-upload-hint">
+      <p className="dropzone-hint">
         {maxFiles && `Limite : ${maxFiles} fichier${maxFiles > 1 ? 's' : ''}`}
         {maxSize && ` • Taille max : ${formatMaxSize(maxSize)}`}
-        {(accept ?? []).length > 0 && ` • Types acceptés : ${accept?.join(', ') || 'Tous les types'}`}
+        {(accept ?? []).length > 0 && 
+          ` • Types acceptés : ${accept?.join(', ') || 'Tous les types'}`}
       </p>
     </Upload.Dragger>
   );

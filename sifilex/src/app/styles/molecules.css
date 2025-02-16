@@ -1,0 +1,92 @@
+/* DropzoneArea styles */
+.dropzone-area {
+    border: 2px dashed var(--border-color);
+    background-color: rgba(16, 19, 30, 0.6);
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.dropzone-area:hover {
+    border-color: var(--primary);
+    background-color: var(--hover-color);
+}
+
+.dropzone-icon {
+    color: var(--primary);
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.dropzone-text {
+    color: var(--text-primary);
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.dropzone-hint {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.dropzone-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* FileItem styles */
+.file-item-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.file-item-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex: 1;
+}
+
+.file-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.file-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.file-size {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.file-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+
+/* SearchInput styles */
+.search-input {
+    background-color: var(--background);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    margin-top: 16px;
+}
+
+.search-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(126, 225, 189, 0.2);
+}
+
+.search-icon {
+    color: var(--text-secondary);
+}

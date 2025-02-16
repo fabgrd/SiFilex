@@ -1,7 +1,8 @@
 'use client';
 
 import { signOut, useSession } from 'next-auth/react';
-import { Avatar, Button, Space, Typography } from 'antd';
+import { Avatar, Button, Space, Typography, Divider } from 'antd';
+import Image from "next/image";
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
@@ -11,55 +12,36 @@ const Navbar = () => {
   const { data: session } = useSession();
 
   return (
-    <nav style={navbarStyle}>
-      <Link href="/" style={logoStyle}>
-        <Title level={2} style={{ color: '#fff', margin: 0 }}>
+    <nav className="navbar">
+      <Link href="/" className="navbar-logo">
+      <Image
+          src="/assets/Logo-Silex-Green.svg"
+          alt="Logo SiFilex"
+          width={40}
+          height={40}
+        />
+        <Typography.Title level={1}>
           SiFilex
-        </Title>
+        </Typography.Title>
       </Link>
 
       {session && (
-        <Space size="middle" style={userInfoStyle}>
-          <div style={welcomeMessageStyle}>
-            <Typography.Text style={{ color: '#fff', fontSize: '16px' }}>
-              Bienvenue, {session.user?.name}
-            </Typography.Text>
-          </div>
+        <div className="navbar-user">
+          <Typography.Text>
+            Bienvenue, {session.user?.name}
+          </Typography.Text>
           <Button
             onClick={() => signOut()}
             type="primary"
             danger
+            className="logout-button"
           >
             Déconnecter
           </Button>
-        </Space>
+        </div>
       )}
-      
     </nav>
   );
-};
-
-const navbarStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  padding: '12px 24px',
-  backgroundColor: '#1890ff',
-  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-  justifyContent: 'space-between',
-};
-
-const logoStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-};
-
-const userInfoStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-};
-
-const welcomeMessageStyle: React.CSSProperties = {
-  marginRight: '12px',
 };
 
 export default Navbar;

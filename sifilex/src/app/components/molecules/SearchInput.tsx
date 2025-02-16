@@ -10,10 +10,10 @@ export interface SearchInputProps {
 
 export const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, className }) => (
   <Input
-    prefix={<SearchOutlined />}
-    placeholder="Search files by name"
+    prefix={<SearchOutlined className="search-icon" />}
+    placeholder="Rechercher un fichier par nom"
     value={value}
     onChange={(e) => onChange(e.target.value)}
-    className={className}
+    className={`search-input ${className || ''}`}
   />
 );

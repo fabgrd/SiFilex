@@ -43,11 +43,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   return (
     <div className="space-y-6">
       <div className="bg-white p-4 rounded-lg shadow-sm">
-        <SearchInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          className="mb-4"
-        />
 
         <DropzoneArea
           options={{
@@ -62,16 +57,21 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 
       {error && (
         <Alert
-          message="Erreur"
-          description={error}
-          type="error"
-          showIcon
-          closable
-          className="my-4"
+        message="Erreur"
+        description={error}
+        type="error"
+        showIcon
+        closable
+        className="my-4"
         />
       )}
 
-      <div className="space-y-4">
+      <SearchInput
+        value={searchQuery}
+        onChange={setSearchQuery}
+        className="mb-4"
+      />
+      
         {filteredFiles.map((file, index) => (
           <FileItem
             key={file.key}
@@ -79,10 +79,9 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
             index={index}
           />
         ))}
-      </div>
 
       {files.length > 0 && (
-        <div className="text-right text-gray-500 text-sm bg-white p-4 rounded-lg shadow-sm">
+        <div className="total-size">
           Espace total utilisé : {formatFileSize(totalSize)}
         </div>
       )}

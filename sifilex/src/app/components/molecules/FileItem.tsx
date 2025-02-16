@@ -15,17 +15,11 @@ export interface FileItemProps {
 export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(file.renamed || file.file.name);
-  const { handleFileRemove, handleFileRename, handlePreviewFile } = useFileOperations();
+  const { handleFileRemove, handleFileRename, handlePreviewFile, handleDownloadFile } = useFileOperations();
 
   const handleSave = () => {
     handleFileRename(index, newName);
     setIsEditing(false);
-  };
-
-  const handleDownload = () => {
-    if (file.url) {
-      window.open(file.url, '_blank');
-    }
   };
 
   const getProgressStatus = () => {
@@ -35,37 +29,15 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
   };
 
   return (
-    <Card
-      className="mb-4 shadow-sm hover:shadow-md transition-shadow"
-      bodyStyle={{ padding: '12px' }}
-    >
-      <div className="flex justify-between items-start">
-        {/* Côté gauche - Informations du fichier */}
-        <div className="flex items-start space-x-3">
-          <div className="pt-1">
-            <FileIcon
-              fileName={file.file.name}
-              className="text-4xl text-blue-500"
-            />
-          </div>
-          <div className="flex flex-col min-w-0">
-            {isEditing ? (
-              <Input
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                onBlur={handleSave}
-                onPressEnter={handleSave}
-                className="w-48"
-              />
-            ) : (
-              <div className="font-medium text-gray-800 truncate max-w-xs">
-                {file.renamed || file.file.name}
-              </div>
-            )}
-            <div className="text-sm text-gray-500 mt-1">
-              {formatFileSize(file.file.size)}
-            </div>
-            <div className="text-sm text-gray-500 mt-1">
+    <Card className="file-item">
+      <div className="file-item-content">
+        <div className="file-item-info">
+          <FileIcon
+            fileName={file.file.name}
+            className="file-icon"
+          />
+          <div className="file-details">
+          <div className="file-size">
               {file.metadata?.uploadedAt
                 ? new Date(file.metadata.uploadedAt).toLocaleString('fr-FR', {
                   day: '2-digit',
@@ -76,45 +48,61 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
                 })
                 : 'Date inconnue'}
             </div>
-            {typeof file.progress === 'number' && (
-              <div className="mt-2 w-48">
-                <Progress
-                  percent={Math.round(file.progress)}
-                  size="small"
-                  status={getProgressStatus()}
-                  showInfo={true}
-                />
+            {isEditing ? (
+              <Input
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                onBlur={handleSave}
+                onPressEnter={handleSave}
+                className="file-name-input"
+              />
+            ) : (
+              <div className="file-name">
+                {file.renamed || file.file.name}
               </div>
+            )}
+            <div className="file-size">
+              {formatFileSize(file.file.size)}
+            </div>
+            {typeof file.progress === 'number' && (
+              <Progress
+                percent={Math.round(file.progress)}
+                size="small"
+                status={getProgressStatus()}
+                className="progress-bar"
+              />
             )}
           </div>
         </div>
 
-        {/* Côté droit - Actions */}
-        <div className="flex items-center space-x-1">
+        <div className="files-actions">
           <ActionButton
             icon={<EditOutlined />}
             onClick={() => setIsEditing(true)}
             tooltip="Renommer"
             disabled={typeof file.progress === 'number'}
+            className="action-button"
           />
           <ActionButton
             icon={<EyeOutlined />}
             onClick={() => handlePreviewFile(file)}
             tooltip="Aperçu"
             disabled={!file.url}
+            className="action-button"
           />
           <ActionButton
             icon={<DownloadOutlined />}
-            onClick={handleDownload}
+            onClick={() => handleDownloadFile(file)}
             tooltip="Télécharger"
-            disabled={!file.url}
+            disabled={typeof file.progress === 'number'}
+            className="action-button"
           />
-          <Divider type="vertical" className="h-6 bg-gray-200" />
+          <Divider type="vertical" className="action-button" />
           <ActionButton
             icon={<DeleteOutlined />}
             onClick={() => handleFileRemove(index)}
             tooltip="Supprimer"
-            className="text-red-500 hover:text-red-700"
+            className="action-button-danger"
             disabled={typeof file.progress === 'number'}
           />
         </div>

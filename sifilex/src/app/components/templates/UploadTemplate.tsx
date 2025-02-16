@@ -1,7 +1,8 @@
-import React from 'react';
-import { Card } from 'antd';
-import { FileUploader } from '@/app/components/organisms/FileUploader';
-import { FileOperationsProvider } from '@/app/lib/context/FileOperationsContext';
+import React from "react";
+import { Card } from "antd";
+import { ArrowDownOutlined } from "@ant-design/icons";
+import { FileUploader } from "@/app/components/organisms/FileUploader";
+import { FileOperationsProvider } from "@/app/lib/context/FileOperationsContext";
 
 interface UploadTemplateProps {
   maxFiles?: number;
@@ -11,8 +12,16 @@ interface UploadTemplateProps {
 
 export const UploadTemplate: React.FC<UploadTemplateProps> = (props) => {
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <Card title="File Upload">
+    <div className="upload-container">
+      <Card
+        title={
+          <span className="upload-title">
+            <ArrowDownOutlined className="upload-icon" />
+           Déposez vos fichiers ici
+          </span>
+        }
+        className="upload-card"
+      >
         <FileOperationsProvider>
           <FileUploader {...props} />
         </FileOperationsProvider>

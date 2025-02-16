@@ -1,6 +1,10 @@
 import { Metadata } from "next";
 import localFont from "next/font/local";
-import "./styles/globals.css";
+import './styles/globals.css';
+import './styles/atoms.css';
+import './styles/molecules.css';
+import './styles/organisms.css';
+import './styles/templates.css';
 import 'antd/dist/antd.css'; 
 import SessionWrapper from "@/app/lib/providers/SessionWrapper";
 import { EdgeStoreProvider } from "../lib/edgestore";

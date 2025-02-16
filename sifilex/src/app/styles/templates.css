@@ -1,0 +1,88 @@
+/* AuthentificationTemplate styles */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background);
+}
+
+.auth-card {
+    background-color: var(--background);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 400px;
+    width: 100%;
+}
+
+/* UploadTemplate styles */
+.upload-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px;
+}
+
+.upload-card {
+    border-radius: 8px;
+}
+
+.upload-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.upload-icon {
+    font-size: 1.3rem;
+}
+
+.ant-btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--background);
+}
+
+.ant-btn-primary:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    opacity: 0.9;
+}
+
+.ant-card {
+    background-color: rgba(16, 19, 30, 0.8);
+    border-color: var(--border-color);
+}
+
+.ant-input {
+    background-color: rgba(16, 19, 30, 0.8);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.ant-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(126, 225, 189, 0.2);
+}
+
+.ant-upload-drag {
+    background-color: rgba(16, 19, 30, 0.6) !important;
+    border-color: var(--border-color) !important;
+}
+
+.ant-upload-drag:hover {
+    border-color: var(--primary) !important;
+}
+
+.ant-modal-content {
+    background-color: var(--background) !important;
+    border: 1px solid var(--border-color);
+}
+
+.ant-tooltip {
+    background-color: var(--background);
+    border: 1px solid var(--border-color);
+}
