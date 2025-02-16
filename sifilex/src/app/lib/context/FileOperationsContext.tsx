@@ -3,6 +3,7 @@ import { FileState } from '../utils/types';
 import { createFileState } from '../utils/fileUtils';
 import { useEdgeStore } from '@/lib/edgestore';
 import { useSession } from 'next-auth/react';
+import { PreviewManager } from '../strategies/PreviewManager';
 
 interface FileOperationsContextType {
   files: FileState[];
@@ -24,6 +25,7 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
   const [loading, setLoading] = useState(true);
   const { edgestore } = useEdgeStore();
   const { data: session } = useSession();
+  const previewManager = new PreviewManager();
 
   // Charge les fichiers depuis localStorage quand la session est disponible
   useEffect(() => {
@@ -140,13 +142,15 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
     );
   }, []);
 
-  const handlePreviewFile = useCallback((file: FileState) => {
-    if (file.url) {
-      window.open(file.url, '_blank');
-    } else {
-      const url = URL.createObjectURL(file.file);
-      window.open(url, '_blank');
-      URL.revokeObjectURL(url);
+  const handlePreviewFile = useCallback(async (file: FileState) => {
+    try {
+      if (file.url) {
+        await previewManager.previewFile(file.url);
+      } else {
+        await previewManager.previewFile(file.file);
+      }
+    } catch (error) {
+      console.error('Error previewing file:', error);
     }
   }, []);
 

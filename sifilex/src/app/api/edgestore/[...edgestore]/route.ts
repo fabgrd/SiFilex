@@ -4,7 +4,8 @@ import {
   createEdgeStoreNextHandler,
 } from "@edgestore/server/adapters/next/app";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../../../../lib/authOptions";
+import { authOptions } from "@/app/lib/utils/authOptions";
+import { getAcceptedFileTypes, GLOBAL_MAX_FILE_SIZE, MAX_FILES } from '@/app/lib/utils/fileTypes';
 import { z } from "zod";
 import { createHash } from "crypto";
 
@@ -35,8 +36,8 @@ const es = initEdgeStore.context<Context>().create();
 const edgeStoreRouter = es.router({
   userFiles: es
     .fileBucket({
-      maxSize: 1024 * 1024 * 20,
-      accept: ['image/*', 'application/pdf', '.doc', '.docx', '.txt', '.md'],
+      maxSize: GLOBAL_MAX_FILE_SIZE,
+      accept: getAcceptedFileTypes(),
     })
     .input(
       z.object({
