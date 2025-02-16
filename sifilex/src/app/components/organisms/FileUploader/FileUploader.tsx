@@ -21,6 +21,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { files, addFiles, error, loading } = useFileOperations();
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const filteredFiles = searchQuery
   ? files.filter(file => {

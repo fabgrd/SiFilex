@@ -17,6 +17,7 @@ export interface FileState {
   url?: string;
   thumbnailUrl?: string | null;
   metadata?: FileMetadata;
+  error?: string;
 }
 
 export interface FileOperationsHook {

@@ -35,15 +35,22 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
   const getStatusIcon = () => {
     if (file.progress === 'ERROR') {
       return (
-        <Tooltip title="Upload failed">
+        <Tooltip title={file.error || "Échec du téléchargement"}>
           <WarningOutlined className="text-red-500" />
         </Tooltip>
       );
     }
     if (file.progress === 'COMPLETE') {
       return (
-        <Tooltip title="Uploaded to cloud">
+        <Tooltip title="Téléchargé avec succès">
           <CloudUploadOutlined className="text-green-500" />
+        </Tooltip>
+      );
+    }
+    if (file.progress === 'PENDING') {
+      return (
+        <Tooltip title="En attente de téléchargement">
+          <CloudUploadOutlined className="text-gray-400" />
         </Tooltip>
       );
     }
@@ -52,6 +59,11 @@ export const FileItem: React.FC<FileItemProps> = ({ file, index }) => {
 
   return (
     <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      {file.error && (
+        <div className="text-red-500 text-sm mt-1">
+          {file.error}
+        </div>
+      )}
       <Space>
         <FileIcon fileName={file.file.name} />
         <div className="flex flex-col">

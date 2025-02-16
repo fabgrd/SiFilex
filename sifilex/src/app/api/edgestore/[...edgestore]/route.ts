@@ -35,7 +35,7 @@ const es = initEdgeStore.context<Context>().create();
 const edgeStoreRouter = es.router({
   userFiles: es
     .fileBucket({
-      maxSize: 1024 * 1024 * 10,
+      maxSize: 1024 * 1024 * 20,
       accept: ['image/*', 'application/pdf', '.doc', '.docx', '.txt', '.md'],
     })
     .input(

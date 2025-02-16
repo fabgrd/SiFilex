@@ -51,15 +51,15 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
 
   const addFiles = useCallback(async (newFiles: File[]) => {
     if (!session?.user?.email) {
-      setError('You must be logged in to upload files');
+      setError('Vous devez être connecté pour télécharger des fichiers');
       return;
     }
-
+  
     try {
       for (const file of newFiles) {
         const fileState = createFileState(file);
         setFiles(prev => [...prev, fileState]);
-
+  
         try {
           const result = await edgestore.userFiles.upload({
             file,
@@ -75,7 +75,7 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
               );
             },
           });
-
+  
           setFiles(prev =>
             prev.map(f =>
               f.key === fileState.key
@@ -91,16 +91,37 @@ export const FileOperationsProvider: React.FC<{ children: React.ReactNode }> = (
                 : f
             )
           );
-        } catch (uploadError) {
+        } catch (error: any) {
+          // Gestion détaillée des erreurs
+          let errorMessage = 'Une erreur est survenue lors du téléchargement';
+          
+          if (error.message?.includes('size')) {
+            errorMessage = `Le fichier ${file.name} est trop volumineux. La taille maximale autorisée est de 10MB`;
+          } else if (error.message?.includes('type')) {
+            errorMessage = `Le type de fichier de ${file.name} n'est pas supporté`;
+          } else if (error.message?.includes('unauthorized')) {
+            errorMessage = 'Vous n\'êtes pas autorisé à télécharger des fichiers';
+          }
+  
+          // Mettre à jour l'état du fichier avec l'erreur
           setFiles(prev =>
             prev.map(f =>
-              f.key === fileState.key ? { ...f, progress: 'ERROR' } : f
+              f.key === fileState.key
+                ? {
+                    ...f,
+                    progress: 'ERROR',
+                    error: errorMessage // Ajoutez error au type FileState
+                  }
+                : f
             )
           );
+  
+          // Afficher l'erreur générale
+          setError(errorMessage);
         }
       }
     } catch (err) {
-      setError('Failed to upload files');
+      setError('Une erreur inattendue est survenue');
     }
   }, [edgestore, session]);
 
