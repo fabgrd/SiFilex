@@ -1,21 +1,3 @@
-/* AuthentificationTemplate styles */
-.auth-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--background);
-}
-
-.auth-card {
-    background-color: var(--background);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 32px;
-    max-width: 400px;
-    width: 100%;
-}
-
 /* UploadTemplate styles */
 .upload-container {
     max-width: 1200px;
@@ -42,19 +24,39 @@
 
 /* AuthentificationTemplate styles */
 .auth-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 1rem;
-  }
-  
-  .auth-card {
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  background-image: url('/assets/landscape.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.auth-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--background);
+  opacity: 0.9;
+  z-index: 1;
+}
+
+.auth-card {
+    background-color: var(--background);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 10em;
+    max-width: 600px;
     width: 100%;
-    max-width: 400px;
-    padding: 2rem;
-    border-radius: 12px;
-  }
+    margin-left: -200px;
+    z-index: 2;
+}
   
   .auth-text {
     font-size: 1rem;
@@ -81,7 +83,7 @@
     background-color: var(--background);
     border: none;
     border-radius: 6px;
-    color: white;
+    color: rgb(141, 20, 20);
     font-size: 1rem;
     text-align: center;
     cursor: pointer;
@@ -90,6 +92,12 @@
   
   .auth-button:hover {
     background-color: var(--background);
+  }
+  
+  .spline-container {
+    width: 60%;
+    height: 100%;
+    z-index: 2;
   }
   
 

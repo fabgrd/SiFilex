@@ -4,7 +4,7 @@ import { Button, Space } from 'antd';
 const LoginButtons = () => {
   return (
     <>
-      <Space size="middle" style={{ marginTop: '16px' }}>
+      <Space size="middle" style={{ marginTop: '16px',}}>
         <Button
           onClick={() => signIn('google')}
           type="default"

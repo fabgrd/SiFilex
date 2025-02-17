@@ -1,15 +1,13 @@
 import { Metadata } from "next";
 import localFont from "next/font/local";
+import 'antd/dist/antd.css'; 
 import './styles/globals.css';
 import './styles/atoms.css';
 import './styles/molecules.css';
 import './styles/organisms.css';
 import './styles/templates.css';
-import 'antd/dist/antd.css'; 
 import SessionWrapper from "@/app/lib/providers/SessionWrapper";
-import { EdgeStoreProvider } from "../lib/edgestore";
 
-// Importation de la police
 const apfelGrotezk = localFont({
   src: [
     {
@@ -36,8 +34,6 @@ const apfelGrotezk = localFont({
   variable: "--font-apfel-grotezk",
 });
 
-export { apfelGrotezk };
-
 export const metadata: Metadata = {
   title: "SiFilex",
   description: "Gérer vos fichiers en toute sécurité",
@@ -48,9 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <SessionWrapper>
         <body className={`${apfelGrotezk.variable}`}>
-          <EdgeStoreProvider>
             {children}
-          </EdgeStoreProvider>
         </body>
       </SessionWrapper>
     </html>
